@@ -2,8 +2,6 @@
 """
 Functions required for running application
 """
-from starsessions import SessionMiddleware
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from os import environ
@@ -18,23 +16,10 @@ from .commons.error_handling.domain_violation_error import (
 )
 from .commons.error_handling.http_error import HttpError
 from .commons.error_handling.repository_error import RepositoryError
-import sentry_sdk
 from .commons.utils.env_config import EnvConfig
 import logging
 
 class Server:
-
-    sentry_sdk.init(
-        dsn="https://fb174047a8818bc4d539e2ff9f1887eb@o4507993293717504.ingest.us.sentry.io/4508023024189440",
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for tracing.
-        traces_sample_rate=1.0,
-        # Set profiles_sample_rate to 1.0 to profile 100%
-        # of sampled transactions.
-        # We recommend adjusting this value in production.
-        profiles_sample_rate=1.0,
-    )
-
     _supabase_client: Client | None = None
 
     _app = FastAPI()
