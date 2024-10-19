@@ -1,0 +1,2 @@
+class SearchAgent:
+    pass
