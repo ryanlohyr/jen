@@ -30,7 +30,7 @@ class GroqService:
         except Exception as e:
             raise ValueError(f"Error while initializing GroqService: {e}")
 
-    def groq_response(self, query: str) -> Optional[str]:
+    def get_groq_response(self, query: str) -> Optional[str]:
         """
         Fetches a response from the Groq API based on the provided query.
 
