@@ -3,3 +3,6 @@
 
 # Except .env.example
 !.env.example
+
+# Add pycache
+__pycache__/
