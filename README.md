@@ -7,7 +7,7 @@
 ## Frontend
 1. Navigate to the frontend directory:
    ```sh
-   cd packages/frontend
+   cd frontend
    ```
 2. Build the frontend:
    ```sh
@@ -26,16 +26,15 @@
 
 ### How to add a package
 ```sh
-   cd packages/backend
+   cd backend
    poetry add python <package_name>
-
    ```
 
 
 ### How to Start
 1. Navigate to the backend directory:
    ```sh
-   cd packages/backend
+   cd backend
    ```
 2. Add `.env.local` and take the env keys from notion
 3. Build the backend:
