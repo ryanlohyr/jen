@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from typing import Optional
 
 load_dotenv()
+
+PRINT_LOGS = os.getenv("PRINT_LOGS", default=False)
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 if not GROQ_API_KEY:
@@ -43,6 +45,7 @@ class GroqService:
         Raises:
             ValueError: If there is an error while fetching the response from the Groq API.
         """
+        PRINT_LOGS and print(f"GroqService: get_groq_response input: query: {query}")
         try:
             chat_completion = self.groq_client.chat.completions.create(
                 messages=[
@@ -54,6 +57,8 @@ class GroqService:
                 model="llama-3.1-8b-instant",
             )
             response = chat_completion.choices[0].message.content
+
+            PRINT_LOGS and print(f"GroqService: get_groq_response: response: {response}")
             return response
         except Exception as e:
             print(f"Error while fetching response from GroqService: {e}")

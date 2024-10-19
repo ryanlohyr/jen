@@ -1,4 +1,9 @@
+import os
+from dotenv import load_dotenv
 from backend.src.search_service.groq import GroqService
+
+load_dotenv()
+PRINT_LOGS = os.getenv("PRINT_LOGS", default=False)
 
 
 class SearchAgent:
@@ -7,6 +12,8 @@ class SearchAgent:
 
 
     def __search_query_formatter(self, user_query_string, user_context_dict):
+        PRINT_LOGS and print(f"SearchAgent: __search_query_formatter inputs: user_query_string: {user_query_string} | user_context_dict: {user_context_dict}")
+
         """
         Uses an LLM to generate a Perplexity search query based on the user's query and context.
         
@@ -36,5 +43,7 @@ class SearchAgent:
 
         # Call to LLM (replace with your LLM model of choice)
         response = self.groq_service.get_groq_response(prompt_template)
+
+        PRINT_LOGS and print(f"SearchAgent: __search_query_formatter: response: {response}")
 
         return response
