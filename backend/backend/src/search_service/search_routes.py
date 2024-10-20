@@ -38,8 +38,7 @@ async def check_hospital_availability(request: Request):
     
     data = json.loads(await request.body())
     
-    
-    supabase.table("progress_of_call").delete().execute()
+    supabase.table("metadata").delete().neq("meta_data", "random").execute()
     
     # Insert a new row with status "progress" and metadata as null
     supabase.table("progress_of_call").insert({
