@@ -24,7 +24,7 @@ async def search(request: Request):
         print(f"Request body: {await request.body()}")
         user_request = json.loads(await request.body())
         
-        user_data = user_request["toolWithToolCallList"][0]["function"]["parameters"]["properties"]
+        user_data = user_request["message"]["toolWithToolCallList"][0]["function"]["parameters"]["properties"]
         user_query = user_data["user_query"]["description"]
         user_context = user_data["user_context"]["description"]
         
