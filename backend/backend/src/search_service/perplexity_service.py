@@ -14,7 +14,7 @@ load_dotenv()
 PRINT_LOGS = False#os.getenv("PRINT_LOGS", default=False)
 
 # MODEL = "llama-3-sonar-small-32k-online" 
-MODEL = "llama-3.1-sonar-small-128k-online"
+MODEL = "llama-3.1-sonar-large-128k-online"
 PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY", default=None)
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", default=None)
 
@@ -39,7 +39,7 @@ class PerplexityService:
     
 
     def search_perplexity(self, query):
-        system = "You are a helpful web searching assistant. Make sure to give precise, accurate and structured responses. For example if you have been asked for a list of doctors, provide the names, addresses, phone numbers, etc. of the doctors."
+        system = "You are a helpful web searching assistant. Make sure to give precise, accurate and structured responses which are real, not fake. For example if you have been asked for a list of doctors, provide the names, addresses, phone numbers, etc. of the doctors."
         human = "{input}"
         prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
 
@@ -49,6 +49,8 @@ class PerplexityService:
 
         # Extract the text content from the response
         response_text = response.content if hasattr(response, 'content') else str(response)
+
+        print("Perplexity answer:", response_text)
     
         
         model = ChatOpenAI(temperature=0, api_key=OPENAI_API_KEY)
