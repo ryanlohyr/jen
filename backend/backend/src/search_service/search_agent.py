@@ -64,21 +64,21 @@ class SearchAgent:
 
         return self.perplexity_service.search_perplexity(search_query)
 
-def main():
-    search_agent = SearchAgent()
-    user_query_string = "I have been experiencing stomach pain and need to see a doctor soon."
-    user_context_dict = {
-            "age": 45,
-            "gender": "female",
-            "medical_history": "diabetes",
-            "location": "Richmond District, San Francisco",
-            "travel_preferences": "walking distance",
-            "timing_preferences": "this week"
-        }
+# def main():
+#     search_agent = SearchAgent()
+#     user_query_string = "I have been experiencing back pain and need to see a doctor soon."
+#     user_context_dict = {
+#             "age": 69,
+#             "gender": "female",
+#             "medical_history": "diabetes",
+#             "location": "Richmond District, San Francisco",
+#             "travel_preferences": "walking distance",
+#             "timing_preferences": "this week"
+#         }
     
-    pprint(search_agent.search(user_query_string, user_context_dict))
+#     pprint(search_agent.search(user_query_string, user_context_dict))
 
     
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
