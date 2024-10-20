@@ -19,17 +19,21 @@ class SearchRequest(BaseModel):
 
 @search_router.post("/search")
 async def search(request: Request):
-    logger.info(f"Search request: {request}")
     print(f"Search request: {request}")
     try:
         print(f"Request body: {await request.body()}")
         user_request = json.loads(await request.body())
-        print(f"User request: {user_request}")
+        
+        user_data = user_request["toolWithToolCallList"][0]["function"]["parameters"]["properties"]
+        user_query = user_data["user_query"]["description"]
+        user_context = user_data["user_context"]["description"]
+        
+        print(f"User request: {user_data}")
     except json.JSONDecodeError as e:
         logger.error(f"Error decoding JSON: {e}")
         print(f"Error decoding JSON: {e}")
         return {"error": f"Invalid JSON: {e}"}
     
     search_agent = SearchAgent()
-    results = search_agent.search(user_request["user_query"], user_request["user_context"])
+    results = search_agent.search(user_query, user_context)
     return {"results": results}
