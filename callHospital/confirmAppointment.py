@@ -3,7 +3,7 @@ import uuid
 import requests
 import json
 
-async def check_hospital_availability(data, mode):
+async def confirm_appointment(data, mode):
     # Assuming `data` is a JSON string
     person_info = json.loads(data)
 
@@ -19,25 +19,28 @@ async def check_hospital_availability(data, mode):
         
     # Creating the message dynamically
     message_content = f"""
-        You are a virtual assistant responsible for calling hospitals on behalf of elderly patients to check insurance compatibility, estimate costs, and availability for appointments. 
-        Your task is to:  
-        1. Call the hospital and ask if the patient's insurance is accepted. 
-        2. If the insurance is **not** supported, politely hang up. 
-        3. If the insurance **is** supported, inform the hospital about the patient’s symptoms and request an estimated bill for the visit. 
-        4. Ask for available appointment times that match the patient’s availability, but **do not** make a reservation.  
-        
-        **Patient Information:**
-        - **Patient Name:** {name}
-        - **Age:** {age}
-        - **Birthday:** {birthday}
-        - **Insurance Provider:** {insurance_info}
-        - **Reason for Visit:** {reason_for_visit}
-        - **Preferred Availability:** {availability}
+        You are a virtual assistant responsible for finalizing hospital appointments on behalf of elderly patients.
+        After gathering availability options from several hospitals, you will now call the selected hospital to confirm the booking based on the patient's choice. Your task is to:
 
-        During the call: 
-        1. Use casual, friendly language with short, simple responses. 
-        2. Remember to **only** check availability without making a reservation, and confirm all details with the hospital at the end.  
-        Keep the conversation short and avoid over-explaining.
+        1. Call the hospital that matches the elderly patient's chosen availability.
+        2. Confirm the booking for the selected time and date, ensuring the appointment is scheduled.
+
+        If no details are provided, assume the following:
+
+        **Default Information:**
+        - **Today's Date:** October 19, 2024
+        - **Patient Name:** Gen Lee
+        - **Age:** 76
+        - **Insurance Provider:** MediHealth
+        - **Reason for Visit:** Stomach ache
+        - **Selected Appointment Time:** October 20, 2024, between 3 PM - 5 PM
+
+        During the call:
+        - Use friendly and casual language.
+        - Be concise and to the point, keeping the conversation short.
+        - do not ask the same question again
+
+        Make sure to **clearly confirm the booking at the end of the conversation and thank the hospital staff.
     """
 
     if mode == 1:
@@ -69,26 +72,25 @@ async def check_hospital_availability(data, mode):
                 "functions": [
                     {
                     "name": "checkAvailability",
+                    "async": "false",
                     "description": "Used to check the availability of the hospital appointment",
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "insuranceYN": {
+                            "appointmentYN": {
                                 "type": "string",
                                 "enum":["Y", "N"],
-                                "description": "check if the patient's insurance is accepted "
-                            },  
-                            "availability": {
-                                "type": "string",
-                                "enum":["Y", "N"],
-                                "description": "check if there is a available appointment times that match the patient’s availability"
+                                "description": "check if appointment has been confirmed"
                             },    
                             "datetime": {
                                 "type": "string",
-                                "description": "The date and time of the availability in ISO format."
+                                "description": "The date and time of the availability in ISO format (only return if appointmentYN is Y"
                             }
                         }
-                    }
+                    },
+                    "required":[
+                        "appointmentYN"
+                    ]
                     }
                 ],
                 "maxTokens": 250,
@@ -113,18 +115,14 @@ async def check_hospital_availability(data, mode):
     
     response = requests.post(url, json=payload, headers=headers)
     response_data = response.json()
-    print(response_data)
 
     id = (response.json().get("id"))
-    print(id)
 
     while response.json().get("status") != "ended":
         url = f"https://api.vapi.ai/call/{id}"
-        print(url)
         headers = {"Authorization": "Bearer 89e8bedd-1abd-46f4-bae3-90753ae0581e"}
         response = requests.request("GET", url, headers=headers)
-        print(response.text)
-        await asyncio.sleep(2)
+    print("\n\n",response.text)
 
         
 
@@ -167,8 +165,7 @@ def main():
         }
     }'''
 
-    asyncio.run(check_hospital_availability(input_data, 1))
-    #check_hospital_availability(input_data, 2)
+    asyncio.run(confirm_appointment(input_data, 1))
     
 
 
