@@ -24,16 +24,6 @@ EnvConfig(env=env)
 
 app = server.create_server()
 
-# Create an instance of the FastAPI class
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,  # Allows specific origins
-    allow_credentials=True,  # Allows cookies and credentials (optional)
-    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
-    allow_headers=["*"],  # Allows all headers (e.g., Authorization, Content-Type)
-)
-
 @app.get("/testing")
 def read_root():
     return {"message": "Welcome to FastAPI!"}
