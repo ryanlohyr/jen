@@ -39,4 +39,7 @@ async def search(request: Request):
     results = search_agent.search(user_query, user_context)
     
     print(f"Results: {results}")
-    return {"results": results}
+    
+    results = {"results": json.dumps(results)}
+    
+    return results
