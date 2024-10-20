@@ -44,7 +44,7 @@ async def test_run():
     messages = [
         {
             "role": "user",
-            "content": "Hi, I'm Jennyy. I'm a vegetarian and I'm allergic to nuts and I'm 79 years old. I love singing, Im a retired. My health nsurance provider is Blue Shield, and I have a Medicare Supplement Plan.",
+            "content": "Hi, I'm Jennyy. I'm a vegetarian and I'm allergic to nuts and I'm 79 years old. I love singing, Im a retired. My health nsurance provider is Blue Shield, and I have a Medicare Supplement Plan. i stay at 426 27th avenue, i have diabetes and i prefer to go to the doctor that is walking distance from me.",
         }
     ]
 
