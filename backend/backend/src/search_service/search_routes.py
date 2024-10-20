@@ -33,7 +33,7 @@ async def check_hospital_availability(request: Request):
 
     data = json.loads(await request.body())
     
-    print(f"data: {data["message"]}")
+    print(f"data: {data['message']}")
 
     arguments = data["message"]["toolCallList"][0]["function"]["arguments"]
     
