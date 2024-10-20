@@ -178,6 +178,7 @@ async def status_of_call():
         metadata = first_item.get("metadata", "Unknown")
     else:
         status = "No data found"
+        metadata = "No data found"
     
     return {"message": "Doctor contacted successfully", "metadata": metadata, "status": status}
 

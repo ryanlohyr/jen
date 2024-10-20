@@ -91,6 +91,8 @@ const General = () => {
       const response = await axios.get("https://jen-calhacks-backend.onrender.com/search/status_of_call");
       const status = response.data.status;
       if (status === "complete") {
+        console.log("COMPLETE")
+        console.log(response.data.metadata)
         vapi.send({
           type: "add-message",
           message: {
