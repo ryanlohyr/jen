@@ -41,21 +41,14 @@ async def check_hospital_availability(request: Request):
 
     data = json.loads(await request.body())
 
-    supabase.table("progress_of_call").delete().neq("meta_data", "random").execute()
-
-    # Insert a new row with status "progress" and metadata as null
-    supabase.table("progress_of_call").insert(
-        {"status": "in_progress", "meta_data": None}
-    ).execute()
-
     print(f"data: {data['message']}")
 
     arguments = data["message"]["toolCallList"][0]["function"]["arguments"]
 
     # doctor_name = arguments["doctor_name"]
     # doctor_phone_number = arguments["doctor_phone_number"]
-    availability_when_user_is_free = arguments["availability_when_user_is_free"]
-    reason_for_visit = arguments["reason_for_visit"]
+    availability_when_user_is_free = arguments.get("availability_when_user_is_free", None)
+    reason_for_visit = arguments.get("reason_for_visit", None)
     tool_id = data["message"]["toolCallList"][0]["id"]
 
     insurance_info = (
@@ -151,10 +144,6 @@ async def check_hospital_availability(request: Request):
 
     groq_service = GroqService()
     response = groq_service.get_groq_response(query)
-
-    supabase.table("progress_of_call").update({"metadata": response}).eq(
-        "status", "complete"
-    ).execute()
 
     res = {"results": [{"toolCallId": tool_id, "result": response}]}
 
