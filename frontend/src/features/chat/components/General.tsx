@@ -14,24 +14,38 @@ import { ChatError } from "./chatComponents/ChatError";
 import ChatOptions from "./chatComponents/ChatOption";
 import { Input } from "./SharedComponents/Input";
 import type { ChatBubbleProps, RequestBody } from "./types/chat.schema";
+import ChatMic from "./chatComponents/ChatMic";
+import Vapi from "@vapi-ai/web";
 
-const initialOptions = [
-  "What exercises can I do to improve my mobility?",
-  "Help me order groceries for delivery.",
-  "Book a medical appointment with my doctor for next week.",
-];
+import { initialOptions, assistantOptions, assistantId } from "./assistantConfig";
+import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 
 interface GeneralProps {
   generalArray: ChatBubbleProps[];
   setGeneralArray: React.Dispatch<React.SetStateAction<ChatBubbleProps[]>>;
 }
 
-const General = ({ generalArray, setGeneralArray }: GeneralProps) => {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [chatOptions, setOptions] = useState<string[]>(initialOptions);
-  const [isNextChatLoading, setIsNextChatLoading] = useState(false);
-  const hasSent = useRef(false); // Guard ref
+const vapi = new Vapi(assistantId);
+const General = () => {
+  
+  // Voice stuff
+  const [assistantIsSpeaking, setAssistantIsSpeaking] = useState(false);
+  const [volumeLevel, setVolumeLevel] = useState(0);
+  const [connected, setConnected] = useState(false);
+  const [connecting, setConnecting] = useState(false);
+  const { showPublicKeyInvalidMessage, setShowPublicKeyInvalidMessage } = usePublicKeyInvalid();
 
+
+  // This is the texts that are displayed in the chat
+  const [generalArray, setGeneralArray] = useState<ChatBubbleProps[]>([]);
+  const [chatOptions, setOptions] = useState<string[]>(initialOptions);
+  const [loadedVapi, setLoadedVapi] = useState(false);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isNextChatLoading, setIsNextChatLoading] = useState(false);
+
+
+  const hasSent = useRef(false); // Guard ref
   // const [triggerGetChat, { data: generalData, isError: isGetChatError }] =
   //   useLazyGetChatQuery();
   const searchParams = useSearchParams(); // Use useSearchParams
@@ -41,6 +55,88 @@ const General = ({ generalArray, setGeneralArray }: GeneralProps) => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 100); // Adjust delay as needed
   }, [generalArray]);
+
+  // hook into Vapi events
+  useEffect(() => {
+    console.log("SETTING UP THE CALL");
+    setLoadedVapi(true);
+    vapi.on("call-start", () => {
+      console.log("THE CALL STARTED");
+      setConnecting(false);
+      setConnected(true);
+    });
+
+    vapi.on("call-end", () => {
+      console.log("THE CALL ENDED");
+      setConnecting(false);
+      setConnected(false);
+    });
+
+    vapi.on("speech-start", () => {
+      setAssistantIsSpeaking(true);
+    });
+
+    vapi.on("speech-end", () => {
+      setAssistantIsSpeaking(false);
+    });
+
+    vapi.on("volume-level", (level) => {
+      setVolumeLevel(level);
+    });
+
+    vapi.on("error", (error) => {
+      console.error(error);
+
+      setConnecting(false);
+    });
+
+    vapi.on("message", async (msg) => {
+      if (msg.type !== "transcript") return;
+
+      console.log("MESSAGE");
+      console.log(msg);
+      console.log("end");
+
+      if (msg.transcriptType === "partial") {
+        // Update UI to show the live partial transcript
+        // console.log("PARTIAL")
+        // console.log(msg)
+      }
+
+      if (msg.transcriptType === "final") {
+        // Update UI to show the final transcript
+        // console.log("FINAL")
+        // console.log(msg.transcript)
+        if (
+          msg.transcript
+            .toLowerCase()
+            .includes("i look for the available options")
+        ) {
+          console.log("STOPPING THE CALL");
+          // const apiData = await fetchDataFromAPI();
+          // console.log(apiData);
+          vapi.stop();
+        }
+      }
+    });
+
+    // we only want this to fire on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  const toggleCallInline = () => {
+    if (connected) {
+      console.log("STOPPING THE CALL");
+      console.log("INLINE")
+      vapi.stop();
+
+    } else {
+      console.log("STARTING THE CALL");
+      setConnecting(true);
+      vapi.start(assistantOptions as CreateAssistantDTO);
+    }
+  };
 
   // useEffect(() => {
   //   if (!generalData?.content) return;
@@ -68,24 +164,9 @@ const General = ({ generalArray, setGeneralArray }: GeneralProps) => {
         carousell: undefined,
       } as ChatBubbleProps,
     ]);
-    triggerGetChat({ userResponse: text } as RequestBody);
+    // triggerGetChat({ userResponse: text } as RequestBody);
     setIsNextChatLoading(true);
   };
-
-  useEffect(() => {
-    if (hasSent.current) {
-      console.log("Effect blocked by guard.");
-      return; // Guard check
-    }
-
-    const input = searchParams.get("input"); // Get input from query params
-    console.log("useEffect triggered. Input from search params:", input);
-
-    if (input) {
-      sendButtonPressed(input);
-      hasSent.current = true; // Set guard after sending
-    }
-  }, [searchParams]);
 
   // if (isGetChatError) {
   //   return <ChatError />;
@@ -95,6 +176,7 @@ const General = ({ generalArray, setGeneralArray }: GeneralProps) => {
     <div className="flex flex-col h-full">
       <div className="grow overflow-y-auto">
         {generalArray.length === 0 && <ChatStartupPage />}
+        <ChatMic onClick={toggleCallInline} connected={connected} loadedVapi={loadedVapi}/>
         {generalArray.length > 0 && (
           <div className="flex flex-col overflow-x-hidden">
             {generalArray.map((chat) => (
@@ -131,6 +213,24 @@ const General = ({ generalArray, setGeneralArray }: GeneralProps) => {
       </div>
     </div>
   );
+};
+
+const usePublicKeyInvalid = () => {
+  const [showPublicKeyInvalidMessage, setShowPublicKeyInvalidMessage] = useState(false);
+
+  // close public key invalid message after delay
+  useEffect(() => {
+    if (showPublicKeyInvalidMessage) {
+      setTimeout(() => {
+        setShowPublicKeyInvalidMessage(false);
+      }, 3000);
+    }
+  }, [showPublicKeyInvalidMessage]);
+
+  return {
+    showPublicKeyInvalidMessage,
+    setShowPublicKeyInvalidMessage,
+  };
 };
 
 export default General;

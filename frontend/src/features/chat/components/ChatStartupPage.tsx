@@ -2,13 +2,13 @@ import React from "react";
 
 const ChatStartupPage = () => {
   return (
-    <div className="flex items-center justify-center">
-      <div className="w-5/6 p-8">
-        <h1 className="text-8xl font-bold my-8">
-          <span className="text-lunaPink">Hello!</span>
+    <div className="flex items-center justify-center text-center">
+      <div className="w-5/6 pt-8 px-8">
+        <h1 className="text-8xl font-bold mt-8 mb-4">
+          <span className="text-lunaPink">Hello Jenny!</span>
         </h1>
 
-        <h1 className="text-4xl mb-8">How can i help you today</h1>
+        <h1 className="text-4xl mb-8 ">How can i help you today</h1>
 
         {/* <p className="text-xl mb-8"> */}
           {/* Ask me a */}

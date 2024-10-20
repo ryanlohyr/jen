@@ -5,7 +5,8 @@ from mem0 import MemoryClient
 import time
 
 class MemoryService:
-    def __init__(self, user_id, categories = None):
+    def __init__(self, user_id =None, categories = None):
+        print(f"API Key: {os.getenv('MEM0AI_API_KEY')}")
         self.client = MemoryClient(api_key=os.getenv("MEM0AI_API_KEY"))
         self.user_id = user_id
         self.categories = categories
@@ -15,6 +16,15 @@ class MemoryService:
 
     def search_memory(self, query):
         return self.client.search(query, user_id=self.user_id)
+
+    # TODO: This is not working
+    def update_memory(self, memory_id, updated_content):
+        print(f"API Key: {os.getenv('MEM0AI_API_KEY')}")
+        print(f"Updating memory with ID: {memory_id}")
+        return self.client.update(memory_id, updated_content)
+
+    def delete_memory(self, memory_id):
+        return self.client.delete(memory_id)
 
     def get_all_memories(self):
 

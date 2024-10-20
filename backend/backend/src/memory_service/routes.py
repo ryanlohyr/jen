@@ -15,13 +15,33 @@ async def get_all_memories(user_id: str):
     
     return {"memories": memories}
 
+@memory_router.put("/{memory_id}")
+async def update_memory(memory_id: str, updated_content: dict):
+    memory_service = MemoryService()
+    success = memory_service.update_memory(memory_id, updated_content)
+    if success:
+        return {"message": "Memory updated successfully"}
+    else:
+        return {"message": "Memory update failed"}, 400
+
+@memory_router.delete("/{memory_id}")
+async def delete_memory(memory_id: str):
+    memory_service = MemoryService()
+    success = memory_service.delete_memory(memory_id)
+    if success:
+        return {"message": "Memory deleted successfully"}
+    else:
+        return {"message": "Memory deletion failed"}, 400
+
+
+
 @memory_router.get("/test-run")
 async def test_run():
     categories = {
         "insurance": "For any content related to the users insurance and insurance claims",
     }
     
-    memory_service = MemoryService(user_id="brandon", categories=categories)
+    memory_service = MemoryService(user_id="brafdsafndon", categories=categories)
     messages = [
         {
             "role": "user",

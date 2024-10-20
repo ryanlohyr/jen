@@ -8,6 +8,7 @@ import { BeatLoader } from "react-spinners";
 const page = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+  const [refresh, setRefresh] = useState(false); // New state for refresh
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,11 +23,11 @@ const page = () => {
     };
 
     fetchData();
-  }, []);
+  }, [refresh]);
 
   return (
     <>
-      {data && <Memories userMemories={data} />}
+      {data && <Memories userMemories={data} setRefresh={setRefresh} />}
       {error && <div>{error}</div>}
       {!data && !error && <BeatLoader />}
     </>

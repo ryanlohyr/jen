@@ -95,7 +95,7 @@ const NavbarContent = ({ setSidebarOpen, currentPageStates }) => {
                     className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 justify-start w-full"
                   >
                     <LogOut
-                      className={`h-6 w-6 shrink-0 `}
+                      className={`h-6 w-6 shrink-0 text-[#6495ED]`}
                       aria-hidden="true"
                     />
                     Logout
