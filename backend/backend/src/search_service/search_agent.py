@@ -33,7 +33,7 @@ class SearchAgent:
 
         For examples on what kind of inputs and outputs are expected, see below:
 
-        Example user_query_string: "I have been experiencing stomach pain and need to see a doctor soon."
+        Example user_query_string: "find doctor."
         Example user_context_dict: {{
             "age": 45,
             "gender": "female",
@@ -68,7 +68,7 @@ class SearchAgent:
 
 
     def searchAboutTopic(self, topic):
-        search_query = f"Find information about {topic}. I am particularly interested in any related events happening in the near future, any notable people associated with the topic, and any recent news articles or blog posts about the topic."
+        search_query = f"Find information about {topic}. I am particularly interested in any specific  events happening in the near future in the San Francisco area which I can attend."
 
         return self.perplexity_service.search_perplexity(search_query)
 
