@@ -24,11 +24,12 @@ async def search(request: Request):
         print(f"Request body: {await request.body()}")
         user_request = json.loads(await request.body())
         
-        user_data = user_request["message"]["toolWithToolCallList"][0]["function"]["parameters"]["properties"]
-        user_query = user_data["user_query"]["description"]
-        user_context = user_data["user_context"]["description"]
+        # user_data = user_request["message"]["toolWithToolCallList"][0]["function"]["parameters"]["properties"]
+        print("ze request is ")
+        print(user_request["message"]["toolCallList"])
+        user_query = user_request["message"]["toolCallList"]["function"]["arguments"]["user_query"]
+        user_context = "Health insurance provider is Blue Shield, Has a Medicare Supplement Plan"
         
-        print(f"User request: {user_data}")
     except json.JSONDecodeError as e:
         logger.error(f"Error decoding JSON: {e}")
         print(f"Error decoding JSON: {e}")
