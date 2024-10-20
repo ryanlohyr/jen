@@ -65,7 +65,8 @@ async def check_hospital_availability(request: Request):
     phoneNumberId = "b3418c1b-5b69-4ca4-829c-c86a8fdbb22b"
 
     # Stub to demo our own phone nnumber
-    cust = {"number": "+13417669783"}
+    # cust = {"number": "+13417669783"}
+    cust = {"number": "+14152863844"}
 
     # Public API Key
     authorization = "Bearer 89e8bedd-1abd-46f4-bae3-90753ae0581e"
@@ -193,7 +194,7 @@ async def status_of_call():
 
 @search_router.post("/search")
 async def search(request: Request):
-    print(f"Search request: {request}")
+    print(f"Search the doctor request: {request}")
     try:
         print(f"Request body: {await request.body()}")
         user_request = json.loads(await request.body())
@@ -234,7 +235,7 @@ async def search(request: Request):
 
 @search_router.post("/search-topic")
 async def search_topic(request: Request):
-    print(f"Search request: {request}")
+    print(f"Search topic request: {request}")
     try:
         print(f"Request body: {await request.body()}")
         user_request = json.loads(await request.body())
