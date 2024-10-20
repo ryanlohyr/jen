@@ -62,6 +62,8 @@ class SearchAgent:
 
         search_query += " Make sure to provide details such as names, addresses, phone numbers etc. If the person doesn't have a phone number but instead I have to contact the organization, explicitly state the organization's phone number as the person's phone number. Repeat information if needed."
 
+        print(f"search_query: {search_query}")
+
         return self.perplexity_service.search_perplexity(search_query)
 
 
