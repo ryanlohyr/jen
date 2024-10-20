@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import requests
 import asyncio
 from dotenv import load_dotenv
+from src.search_service.groq_service import GroqService
 import os
 load_dotenv()
 
@@ -115,11 +116,26 @@ async def check_hospital_availability(request: Request):
         await asyncio.sleep(2)
 
     print(response.text)
-    
-    response = {"results": [{"toolCallId": tool_id, "result": response.text}]}
 
-    # TODO: throw this into an LLM, get something regarding did we successfully get a time or not
-    return response
+    transcript = response.json()["messagesOpenAIFormatted"]
+
+    query = f"""
+    I am giving you a conversation that the 'user' had with the 'assistant' to check the acceptance of particular insurance providers and availability of the hospital for an appointment.
+    Can you go through the transcript and tell me if there was a conclusion reached with regards to if there is a specific time available for the appointment?
+
+    If there is: just return the time and data (if possible) of the appointment.
+    If there isn't: return that there was no time available for the appointment.
+
+    Do not return any other information except the sentences which i have asked for.\n
+"""
+    query += "\n".join(transcript)
+
+    groq_service = GroqService()
+    response = groq_service.get_groq_response(query)
+
+    res = {"results": [{"toolCallId": tool_id, "result": response}]}
+
+    return res
     # return {"message": "Doctor contacted successfully"}
 
 
