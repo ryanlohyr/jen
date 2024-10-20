@@ -129,7 +129,7 @@ async def check_hospital_availability(request: Request):
         response = requests.request("GET", url, headers=headers)
         await asyncio.sleep(2)
 
-    print(response.text)
+    print(response.json())
 
     transcript = response.json()["messagesOpenAIFormatted"]
 
