@@ -52,8 +52,8 @@ async def check_hospital_availability(request: Request):
 
     arguments = data["message"]["toolCallList"][0]["function"]["arguments"]
 
-    doctor_name = arguments["doctor_name"]
-    doctor_phone_number = arguments["doctor_phone_number"]
+    # doctor_name = arguments["doctor_name"]
+    # doctor_phone_number = arguments["doctor_phone_number"]
     availability_when_user_is_free = arguments["availability_when_user_is_free"]
     reason_for_visit = arguments["reason_for_visit"]
     tool_id = data["message"]["toolCallList"][0]["id"]
