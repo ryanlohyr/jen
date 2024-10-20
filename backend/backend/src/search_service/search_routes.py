@@ -27,7 +27,7 @@ async def search(request: Request):
         # user_data = user_request["message"]["toolWithToolCallList"][0]["function"]["parameters"]["properties"]
         print("ze request is ")
         print(user_request["message"]["toolCallList"])
-        user_query = user_request["message"]["toolCallList"]["function"]["arguments"]["user_query"]
+        user_query = user_request["message"]["toolCallList"][0]["function"]["arguments"]["user_query"]
         user_context = "Health insurance provider is Blue Shield, Has a Medicare Supplement Plan"
         
     except json.JSONDecodeError as e:
