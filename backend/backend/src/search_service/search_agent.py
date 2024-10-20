@@ -68,9 +68,13 @@ class SearchAgent:
 
 
     def searchAboutTopic(self, topic):
-        search_query = f"Find information about {topic}. I am particularly interested in any specific  events happening in the near future in the San Francisco area which I can attend."
+        search_query = f"I am very interested in {topic}. Can you find any cool locations or events which I can attend? I live in Richmond District, San Francisco!"
 
-        return self.perplexity_service.search_perplexity(search_query)
+        response = self.perplexity_service.search_perplexity(search_query)
+
+        print(f"searchAboutTopic response: {response}")
+
+        return response
 
 # def main():
 #     search_agent = SearchAgent()
