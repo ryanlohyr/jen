@@ -25,6 +25,12 @@ async def update_memory(memory_id: str, updated_content: dict):
         return {"message": "Memory updated successfully"}
     else:
         return {"message": "Memory update failed"}, 400
+    
+@memory_router.post("/add_messages")
+async def add_messages(messages: list[dict]):
+    memory_service = MemoryService()
+    memory_service.add_messages(messages)
+    return {"message": "Messages added successfully"}
 
 
 @memory_router.delete("/{memory_id}")
