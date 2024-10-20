@@ -42,7 +42,7 @@ async def check_hospital_availability(request: Request):
     
     # Insert a new row with status "progress" and metadata as null
     supabase.table("progress_of_call").insert({
-        "status": "progress",
+        "status": "in_progress",
         "meta_data": None
     }).execute()
     
