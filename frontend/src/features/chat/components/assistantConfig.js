@@ -46,7 +46,7 @@ export const assistantOptions = (userProfile) => {
               type: "request-response-delayed",
               content:
                 "I'm sorry, getting the information is taking longer than expected. Please wait a little longer.",
-              timingMilliseconds: 15000,
+              timingMilliseconds: 20000,
             },
           ],
           function: {
@@ -91,7 +91,7 @@ export const assistantOptions = (userProfile) => {
               type: "request-response-delayed",
               content:
                 "I'm sorry, getting the information is taking longer than expected. Please wait a little longer.",
-              timingMilliseconds: 15000,
+              timingMilliseconds: 20000,
             },
           ],
           function: {
@@ -145,7 +145,7 @@ export const assistantOptions = (userProfile) => {
               type: "request-response-delayed",
               content:
                 "I'm sorry, im feeling lazy and taking a little while.",
-              timingMilliseconds: 15000,
+              timingMilliseconds: 20000,
             },
           ],
           function: {

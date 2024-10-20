@@ -70,6 +70,8 @@ const General = () => {
     }, 100); // Adjust delay as needed
   }, [generalArray]);
 
+
+
   // hook into Vapi events
   useEffect(() => {
     console.log("SETTING UP THE CALL");
@@ -87,21 +89,6 @@ const General = () => {
     });
 
     vapi.on("speech-start", async() => {
-      const response = await axios.get("https://jen-calhacks-backend.onrender.com/search/status_of_call");
-      const status = response.data.status;
-      if (status === "complete") {
-        console.log("COMPLETE")
-        console.log(response.data.metadata)
-        vapi.send({
-          type: "add-message",
-          message: {
-            role: "assistant",
-            content: response.data.metadata,
-          },
-        });
-      }else {
-
-      }
       setAssistantIsSpeaking(true);
       console.log("SPEECH STARTED");
     });
