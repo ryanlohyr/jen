@@ -42,7 +42,6 @@ async def check_hospital_availability(request: Request):
     availability_when_user_is_free = arguments["availability_when_user_is_free"]
     reason_for_visit = arguments["reason_for_visit"]
     tool_id = data["message"]["toolCallList"][0]["id"]
-    person_info = json.loads(data)
 
     insurance_info = "Health insurance provider is Blue Shield, Has a Medicare Supplement Plan"
 
