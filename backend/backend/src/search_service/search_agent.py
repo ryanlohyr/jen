@@ -1,11 +1,11 @@
 import os
-from backend.src.search_service.perplexity_service import PerplexityService
 from dotenv import load_dotenv
+load_dotenv("backend/.env.local")
+from backend.src.search_service.perplexity_service import PerplexityService
 from backend.src.search_service.groq_service import GroqService
 from pprint import pprint
 
-load_dotenv()
-PRINT_LOGS = int(os.getenv("PRINT_LOGS", default=False))
+PRINT_LOGS = False #int(os.getenv("PRINT_LOGS", default=False))
 
 
 class SearchAgent:
@@ -82,3 +82,44 @@ class SearchAgent:
 
 # if __name__ == "__main__":
 #     main()
+
+if __name__ == "__main__":
+    from uagents import Agent, Context, Protocol, Model
+    from ai_engine import UAgentResponse, UAgentResponseType
+    import requests
+    from typing import Dict
+
+    from backend.src.search_service.search_agent import SearchAgent
+
+    SEED_PHRASE = "search_agent"
+    AGENT_MAILBOX_KEY = "48092180-959d-4487-ad82-68369b118143"
+
+    class SearcAgentResponse(Model):
+        search_string: str
+        user_dict: Dict = {}
+
+    searchAgent = Agent(
+        name="SearchAgent", #or any name
+        seed=SEED_PHRASE,
+        mailbox=f"{AGENT_MAILBOX_KEY}@https://agentverse.ai",
+    )
+    content_protocol = Protocol("Search Agent Protocol")
+    print(searchAgent.address)
+
+    def get_doctor_list(search_string, user_dict):
+        search1agent = SearchAgent()
+        response = search1agent.search(search_string, user_dict)
+        return response
+
+    @content_protocol.on_message(model=SearcAgentResponse, replies={UAgentResponse})
+    async def sentiment(ctx: Context, sender: str, msg: SearcAgentResponse):
+    
+        doctor_list = get_doctor_list(msg.search_string, msg.user_dict)
+        print(msg.search_string, msg.user_dict)
+        print(type(doctor_list))
+        await ctx.send(
+            sender, UAgentResponse(message=str(doctor_list), type=UAgentResponseType.FINAL)
+        )
+
+    searchAgent.include(content_protocol, publish_manifest=True)
+    searchAgent.run()

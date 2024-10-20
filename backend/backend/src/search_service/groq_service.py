@@ -6,7 +6,7 @@ import time
 
 load_dotenv()
 
-PRINT_LOGS = int(os.getenv("PRINT_LOGS", default=False))
+PRINT_LOGS = False#int(os.getenv("PRINT_LOGS", default=False))
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 if not GROQ_API_KEY:

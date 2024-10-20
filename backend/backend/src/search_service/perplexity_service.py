@@ -11,7 +11,7 @@ from langchain_openai import ChatOpenAI
 
 
 load_dotenv()
-PRINT_LOGS = os.getenv("PRINT_LOGS", default=False)
+PRINT_LOGS = False#os.getenv("PRINT_LOGS", default=False)
 
 # MODEL = "llama-3-sonar-small-32k-online" 
 MODEL = "llama-3.1-sonar-small-128k-online"

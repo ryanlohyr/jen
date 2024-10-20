@@ -18,7 +18,6 @@ class EnvConfig:
     """
 
     REQUIRED_VARS = [
-        "DATABASE_URL",
         "PORT",
         "FAST_API_ENV",
         "SUPABASE_URL",
