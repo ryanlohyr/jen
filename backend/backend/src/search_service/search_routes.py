@@ -131,7 +131,7 @@ async def check_hospital_availability(request: Request):
 
     print(response.text)
 
-    transcript = response.text.json()["messagesOpenAIFormatted"]
+    transcript = response.json()["messagesOpenAIFormatted"]
 
     query = f"""
     I am giving you a conversation that the 'user' had with the 'assistant' to check the acceptance of particular insurance providers and availability of the hospital for an appointment.
