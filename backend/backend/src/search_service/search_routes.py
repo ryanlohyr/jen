@@ -8,6 +8,7 @@ import asyncio
 from dotenv import load_dotenv
 from src.search_service.groq_service import GroqService
 import os
+
 load_dotenv()
 
 router = APIRouter(prefix="/search")
@@ -28,41 +29,44 @@ class SearchRequest(BaseModel):
     response: str
     user_context: str
 
+
 SUPABASE_URL = "https://mzcfqpondtzlfpzkyegx.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16Y2ZxcG9uZHR6bGZwemt5ZWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk0MzMwMjIsImV4cCI6MjA0NTAwOTAyMn0.wwP0eaHLpRbsrVDb8Z_LOgQh9WK2tBwxGJJi73rlxPA"
 
+
 @search_router.post("/contactDoctor")
 async def check_hospital_availability(request: Request):
-    
+
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    
+
     data = json.loads(await request.body())
-    
+
     supabase.table("progress_of_call").delete().neq("meta_data", "random").execute()
-    
+
     # Insert a new row with status "progress" and metadata as null
-    supabase.table("progress_of_call").insert({
-        "status": "in_progress",
-        "meta_data": None
-    }).execute()
-    
+    supabase.table("progress_of_call").insert(
+        {"status": "in_progress", "meta_data": None}
+    ).execute()
+
     print(f"data: {data['message']}")
 
     arguments = data["message"]["toolCallList"][0]["function"]["arguments"]
-    
+
     doctor_name = arguments["doctor_name"]
     doctor_phone_number = arguments["doctor_phone_number"]
     availability_when_user_is_free = arguments["availability_when_user_is_free"]
     reason_for_visit = arguments["reason_for_visit"]
     tool_id = data["message"]["toolCallList"][0]["id"]
 
-    insurance_info = "Health insurance provider is Blue Shield, Has a Medicare Supplement Plan"
+    insurance_info = (
+        "Health insurance provider is Blue Shield, Has a Medicare Supplement Plan"
+    )
 
     phoneNumberId = "b3418c1b-5b69-4ca4-829c-c86a8fdbb22b"
-    
+
     # Stub to demo our own phone nnumber
     cust = {"number": "+13417669783"}
-    
+
     # Public API Key
     authorization = "Bearer 89e8bedd-1abd-46f4-bae3-90753ae0581e"
 
@@ -146,8 +150,10 @@ async def check_hospital_availability(request: Request):
 
     groq_service = GroqService()
     response = groq_service.get_groq_response(query)
-    
-    supabase.table("progress_of_call").update({"metadata": response}).eq("status", "complete").execute()
+
+    supabase.table("progress_of_call").update({"metadata": response}).eq(
+        "status", "complete"
+    ).execute()
 
     res = {"results": [{"toolCallId": tool_id, "result": response}]}
 
@@ -158,18 +164,17 @@ async def check_hospital_availability(request: Request):
 @search_router.get("/status_of_call")
 async def status_of_call():
     print("STATUS OF CALL")
-    
-    
+
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    
+
     print("client created")
-    
+
     response = supabase.table("progress_of_call").select("*").limit(1).execute()
-    
+
     data = response.data
-    
+
     print(data)
-    
+
     if data:
         first_item = data[0]
         print(first_item)
@@ -178,8 +183,13 @@ async def status_of_call():
     else:
         status = "No data found"
         metadata = "No data found"
-    
-    return {"message": "Doctor contacted successfully", "metadata": metadata, "status": status}
+
+    return {
+        "message": "Doctor contacted successfully",
+        "metadata": metadata,
+        "status": status,
+    }
+
 
 @search_router.post("/search")
 async def search(request: Request):
@@ -194,9 +204,13 @@ async def search(request: Request):
         user_query = user_request["message"]["toolCallList"][0]["function"][
             "arguments"
         ]["user_query"]
-        user_context = (
-            "Health insurance provider is Blue Shield, Has a Medicare Supplement Plan"
-        )
+        user_context = {
+            "travel_preferences": "walking distance",
+            "location": "426 Richmond District, San Francisco",
+            "age": 79,
+            "gender": "female",
+            "medical_history": "diabetes",
+        }
 
         tool_id = user_request["message"]["toolCallList"][0]["id"]
 
@@ -206,6 +220,9 @@ async def search(request: Request):
         return {"error": f"Invalid JSON: {e}"}
 
     search_agent = SearchAgent()
+    
+    print(f"user_query: {user_query}")
+    print(f"user_context: {user_context}")
     results = search_agent.search(user_query, user_context)
 
     response = {"results": [{"toolCallId": tool_id, "result": json.dumps(results)}]}
@@ -213,6 +230,7 @@ async def search(request: Request):
     print(f"ze response is {response}")
 
     return response
+
 
 @search_router.post("/search-topic")
 async def search_topic(request: Request):
