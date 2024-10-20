@@ -13,6 +13,11 @@ class MemoryService:
 
     def add_messages(self, messages):
         self.client.add(messages, user_id=self.user_id, categories=self.categories)
+    
+    @staticmethod    
+    def _get_all_memories_by_user_id(user_id):
+        client = MemoryClient(api_key=os.getenv("MEM0AI_API_KEY"))
+        return client.get_all(user_id=user_id)
 
     def search_memory(self, query):
         return self.client.search(query, user_id=self.user_id)
@@ -51,6 +56,7 @@ class MemoryService:
             iteration_count += 1  # Increment the iteration counter 
                 
         return memories
+
 
 
 # EXAMPLE USAGE

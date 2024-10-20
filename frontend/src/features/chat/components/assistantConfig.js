@@ -22,14 +22,17 @@ export const assistantOptions = (userProfile) => {
           `,
         },
       ],
+      toolIds: ["6ad122d0-c202-402b-9f07-720625c47705"],
     },
   };
 };
 
 export const initialOptions = [
   "What exercises can I do to improve my mobility?",
-    "Help me order groceries for delivery.",
-    "Book a medical appointment with my doctor for next week.",
-  ];
+  "Help me order groceries for delivery.",
+  "Book a medical appointment with my doctor for next week.",
+];
 
-export const assistantId = "df45e7cf-1fd0-48cd-a803-eccc569d7c09";
+export const vapiPublicKey = "df45e7cf-1fd0-48cd-a803-eccc569d7c09";
+
+export const assistantId = "d92ab147-ec7a-4f62-9fff-82668d1c7401";

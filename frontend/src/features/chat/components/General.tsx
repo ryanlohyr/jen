@@ -20,7 +20,8 @@ import Vapi from "@vapi-ai/web";
 import {
   initialOptions,
   assistantOptions,
-  assistantId,
+  vapiPublicKey,
+  assistantId
 } from "./assistantConfig";
 import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 
@@ -29,7 +30,7 @@ interface GeneralProps {
   setGeneralArray: React.Dispatch<React.SetStateAction<ChatBubbleProps[]>>;
 }
 
-const vapi = new Vapi(assistantId);
+const vapi = new Vapi(vapiPublicKey);
 const General = () => {
   // Voice stuff
   const [assistantIsSpeaking, setAssistantIsSpeaking] = useState(false);
@@ -55,7 +56,7 @@ const General = () => {
   const fetchUserProfileData = async () => {
     try {
       const response = await axios.get(
-        "http://0.0.0.0:8080/memory/all_memories?user_id=brandon"
+        "http://0.0.0.0:8080/memory/all_memories?user_id=jenny"
       );
       return response.data;
     } catch (err) {
@@ -141,17 +142,6 @@ const General = () => {
             } as ChatBubbleProps,
           ];
         });
-
-        if (
-          msg.transcript
-            .toLowerCase()
-            .includes("i look for the available options")
-        ) {
-          console.log("STOPPING THE CALL");
-          // const apiData = await fetchDataFromAPI();
-          // console.log(apiData);
-          vapi.stop();
-        }
       }
     });
 
@@ -210,13 +200,13 @@ const General = () => {
 
   return (
     <div className="flex flex-col h-full">
+      {generalArray.length === 0 && <ChatStartupPage />}
+      <ChatMic
+        onClick={toggleCallInline}
+        connected={connected}
+        loadedVapi={loadedVapi}
+      />
       <div className="grow overflow-y-auto">
-        {generalArray.length === 0 && <ChatStartupPage />}
-        <ChatMic
-          onClick={toggleCallInline}
-          connected={connected}
-          loadedVapi={loadedVapi}
-        />
         {generalArray.length > 0 && (
           <div className="flex flex-col overflow-x-hidden">
             {generalArray.map((chat) => (

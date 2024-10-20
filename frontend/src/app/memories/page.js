@@ -14,7 +14,7 @@ const page = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://0.0.0.0:8080/memory/all_memories?user_id=brandon"
+          "http://0.0.0.0:8080/memory/all_memories?user_id=jenny"
         );
         setData(response.data);
       } catch (err) {
