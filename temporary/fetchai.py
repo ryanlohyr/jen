@@ -22,7 +22,7 @@ api_key = ""
 interaction_user_prompt_header = f"\n\n🤖 Interaction time"
  
  
-async def main():
+async def main(objective: str = None):
     # logger.debug("🚀 Starting example execution")
     ai_engine = AiEngine(api_key)
  
@@ -33,20 +33,20 @@ async def main():
         raise Exception('Could not find "Public" function group.')
  
     session = await ai_engine.create_session(function_group=public_group.uuid)
-    default_objective: str = "Find a flight to warsaw."
  
     # logger.info(interaction_user_prompt_header)
-    objective = """
-    user_query_string = "I have been experiencing back pain and need to see a doctor soon."
-     user_context_dict = {
-             "age": 69,
-             "gender": "female",
-             "medical_history": "diabetes",
-             "location": "Richmond District, San Francisco",
-             "travel_preferences": "walking distance",
-             "timing_preferences": "this week"
-         }
-    """
+    if objective == None:
+        objective = """
+        user_query_string = I have been experiencing back pain and need to see a doctor soon.
+        user_context_dict = {
+                age: 69,
+                gender: female,
+                medical_history: diabetes,
+                location: Richmond District, San Francisco,
+                travel_preferences: walking distance,
+                timing_preferences: this week
+            }
+        """
     await session.start(objective)
  
     try:
@@ -90,7 +90,7 @@ async def main():
                     # LAST TIME IT IS CALLED
                     # final_response = message.text.capitalize()
                     try:
-                        final_response = json.loads(json.loads(message.model_dump_json())["text"].replace('"', '"""').replace("'", '"'))
+                        final_response = json.loads(json.loads(message.json())["text"].replace('"', '"""').replace("'", '"'))
                     except:
                         pass
                     response = ""
