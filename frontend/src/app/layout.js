@@ -1,8 +1,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
-// import { Navbar } from "@/features/navbar/Narbar";
-// import Navbar from "@/features/navbar/Navbar";
 import { Navbar } from "../features/navbar/Narbar";
+import { Toaster } from "@/components/ui/toaster"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,6 +25,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased  overflow-x-hidden overflow-y-hidden w-[100vw] h-[100vh]`}
       >
+        <Toaster />
         <div className="flex flex-row w-[100vw] h-[100vh]">
           <Navbar />
           {children}

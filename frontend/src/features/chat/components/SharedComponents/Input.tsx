@@ -17,10 +17,10 @@ export const Input = ({ sendButtonPressed, isDisabled }: ChatInputProps) => {
 
   // Adds an extra line for the text area when the user types
   function adjustHeight() {
-    if (textbox.current) {
-      textbox.current.style.height = ONE_LINE_HEIGHT;
-      textbox.current.style.height = `${textbox.current.scrollHeight}px`;
-    }
+    // if (textbox.current) {
+    //   textbox.current.style.height = ONE_LINE_HEIGHT;
+    //   textbox.current.style.height = `${textbox.current.scrollHeight}px`;
+    // }
   }
 
   useLayoutEffect(adjustHeight, []);
@@ -59,7 +59,7 @@ export const Input = ({ sendButtonPressed, isDisabled }: ChatInputProps) => {
             }
           }}
           placeholder="Send message"
-          className="resize-none px-4 max-h-[40vh] grow border-none rounded-xl focus:outline-none border-transparent focus:ring-0 overflow-x-hidden"
+          className="resize-none pt-2 px-4 h-[40px] grow border-none rounded-xl focus:outline-none border-transparent focus:ring-0 overflow-x-hidden"
           disabled={isDisabled} // Disable textarea when isDisabled is true
         />
         <button type="submit" disabled={isDisabled}>

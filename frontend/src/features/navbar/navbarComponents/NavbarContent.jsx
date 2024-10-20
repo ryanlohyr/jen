@@ -31,7 +31,7 @@ const NavbarContent = ({ setSidebarOpen, currentPageStates }) => {
         <Link href="/">
         </Link>
         <div>
-          <h1 className="font-bold text-lg">Jem</h1>
+          <h1 className="font-bold text-lg">Jen</h1>
           <p className="text-gray-400 font-extralight text-xs">
             Your personal assistant
           </p>
@@ -95,7 +95,7 @@ const NavbarContent = ({ setSidebarOpen, currentPageStates }) => {
                     className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 justify-start w-full"
                   >
                     <LogOut
-                      className={`h-6 w-6 shrink-0 `}
+                      className={`h-6 w-6 shrink-0 text-[#6495ED]`}
                       aria-hidden="true"
                     />
                     Logout
