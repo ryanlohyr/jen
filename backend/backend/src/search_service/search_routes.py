@@ -39,7 +39,7 @@ async def check_hospital_availability(request: Request):
     doctor_phone_number = arguments["doctor_phone_number"]
     availability_when_user_is_free = arguments["availability_when_user_is_free"]
     reason_for_visit = arguments["reason_for_visit"]
-
+    tool_id = data["message"]["toolCallList"][0]["id"]
     person_info = json.loads(data)
 
     insurance_info = "Health insurance provider is Blue Shield, Has a Medicare Supplement Plan"
@@ -116,9 +116,11 @@ async def check_hospital_availability(request: Request):
         await asyncio.sleep(2)
 
     print(response.text)
+    
+    response = {"results": [{"toolCallId": tool_id, "result": response.text}]}
 
     # TODO: throw this into an LLM, get something regarding did we successfully get a time or not
-    return response.text
+    return response
     # return {"message": "Doctor contacted successfully"}
 
 
