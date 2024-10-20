@@ -38,7 +38,7 @@ class PerplexityService:
         
     
 
-    def search_perplexity_events(self, query):
+    def search_perplexity(self, query):
         system = "You are a helpful web searching assistant. Make sure to give precise, accurate and structured responses which are real, not fake. For example if you have been asked for a list of doctors, provide the names, addresses, phone numbers, etc. of the doctors."
         human = "{input}"
         prompt = ChatPromptTemplate.from_messages([("system", system), ("human", human)])
