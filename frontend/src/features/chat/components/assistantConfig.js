@@ -134,7 +134,7 @@ export const assistantOptions = (userProfile) => {
             {
               type: "request-complete",
               content:
-                "I remember you like to sing and would love to share some stuff with you if you are still bored.",
+                "I remember you like to sing and found a few music related events near you.",
             },
             {
               type: "request-failed",
