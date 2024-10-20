@@ -2,19 +2,45 @@ import os
 
 from mem0 import MemoryClient
 
+import time
+
 class MemoryService:
-    def __init__(self, user_id):
+    def __init__(self, user_id, categories = None):
         self.client = MemoryClient(api_key=os.getenv("MEM0AI_API_KEY"))
         self.user_id = user_id
+        self.categories = categories
 
     def add_messages(self, messages):
-        self.client.add(messages, user_id=self.user_id)
+        self.client.add(messages, user_id=self.user_id, categories=self.categories)
 
     def search_memory(self, query):
         return self.client.search(query, user_id=self.user_id)
 
     def get_all_memories(self):
-        return self.client.get_all(user_id=self.user_id)
+
+        def has_categories(memory):
+            if "categories" not in memory or memory["categories"] is None:
+                print("Memory does not have categories")
+                return False
+
+            if len(memory["categories"]) > 0:
+                return True
+            return False
+        
+        memories = self.client.get_all(user_id=self.user_id)
+        
+        # If less than half of the memories have categories, get all memories, for some reason the memories are not categorized on first call
+        max_iterations = 5
+        iteration_count = 0
+        while any(not has_categories(memory) for memory in memories):
+            if iteration_count >= max_iterations:  # Check if the maximum number of iterations is reached
+                raise TimeoutError("Operation exceeded maximum iterations of 5")
+            print("Getting all memories because less than half of the memories have categories")
+            memories = self.client.get_all(user_id=self.user_id)
+            time.sleep(3)
+            iteration_count += 1  # Increment the iteration counter 
+                
+        return memories
 
 
 # EXAMPLE USAGE

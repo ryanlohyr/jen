@@ -31,7 +31,7 @@ const NavbarContent = ({ setSidebarOpen, currentPageStates }) => {
         <Link href="/">
         </Link>
         <div>
-          <h1 className="font-bold text-lg">Jem</h1>
+          <h1 className="font-bold text-lg">Jen</h1>
           <p className="text-gray-400 font-extralight text-xs">
             Your personal assistant
           </p>

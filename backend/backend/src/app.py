@@ -20,6 +20,8 @@ from .commons.error_handling.repository_error import RepositoryError
 from .commons.utils.env_config import EnvConfig
 import logging
 
+from .memory_service.routes import memory_router
+
 class Server:
     _supabase_client: Client | None = None
 
@@ -134,6 +136,7 @@ class Server:
         from .ai_routes.data_access.repository import router as ai_router
 
         self._app.include_router(ai_router)
+        self._app.include_router(memory_router)
         # self._app.include_router(vendor_router)
         # self._app.include_router(user_router)
         # self._app.include_router(help_router)
