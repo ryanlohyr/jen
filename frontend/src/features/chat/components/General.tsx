@@ -164,20 +164,6 @@ const General = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!generalData?.content) return;
-  //   setIsNextChatLoading(false);
-  //   setOptions(generalData.options || []);
-  //   setGeneralArray((prevArray) => [
-  //     ...prevArray,
-  //     {
-  //       isMe: generalData.isMe,
-  //       content: generalData.content,
-  //       carousell: generalData.carousell || undefined,
-  //     } as ChatBubbleProps,
-  //   ]);
-  // }, [generalData, setGeneralArray]);
-
   const sendButtonPressed = (text: string) => {
     console.log("sendButtonPressed called with:", text);
     if (!text) return;

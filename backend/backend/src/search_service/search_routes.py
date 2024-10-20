@@ -29,8 +29,6 @@ class SearchRequest(BaseModel):
 @search_router.post("/contactDoctor")
 async def check_hospital_availability(request: Request):
     
-    
-
     data = json.loads(await request.body())
     
     print(f"data: {data['message']}")

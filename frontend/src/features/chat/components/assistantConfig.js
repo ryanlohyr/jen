@@ -35,7 +35,7 @@ export const assistantOptions = (userProfile) => {
             {
               type: "request-complete",
               content:
-                "I was able to get the relevant doctor information. These are the options available:",
+                "I was able to get the relevant doctor information. Would you like to know about the options?",
             },
             {
               type: "request-failed",
@@ -46,7 +46,7 @@ export const assistantOptions = (userProfile) => {
               type: "request-response-delayed",
               content:
                 "I'm sorry, getting the information is taking longer than expected. Please wait a little longer.",
-              timingMilliseconds: 2000,
+              timingMilliseconds: 15000,
             },
           ],
           function: {
@@ -67,6 +67,60 @@ export const assistantOptions = (userProfile) => {
           async: false,
           server: {
             url: "https://jen-calhacks-backend.onrender.com/search/search",
+          },
+        },
+        {
+          type: "function",
+          messages: [
+            {
+              type: "request-start",
+              content:
+                "Contacting doctors now, i will let you know again when its done!",
+            },
+            // {
+            //   type: "request-complete",
+            //   content:
+            //     "I will contact the doctor now, and let you know again when the availability!",
+            // },
+            {
+              type: "request-failed",
+              content:
+                "I'm sorry, I was unable to get the relevant doctor information. Please try again later.",
+            },
+            {
+              type: "request-response-delayed",
+              content:
+                "I'm sorry, getting the information is taking longer than expected. Please wait a little longer.",
+              timingMilliseconds: 15000,
+            },
+          ],
+          function: {
+            name: "contactingDoctorNow",
+            parameters: {
+              type: "object",
+              properties: {
+                doctor_phone_number: {
+                  type: "number",
+                },
+                doctor_name: {
+                  type: "string",
+                },
+                availability_when_user_is_free: {
+                  type: "string",
+                },
+                reason_for_visit: {
+                  type: "string",
+                },
+                availability: {
+                  type: "string",
+                },
+              },
+            },
+            description: "Contacts the doctor that the patient is trying to reach.",
+          },
+          async: false,
+          server: {
+            url: "https://jen-calhacks-backend.onrender.com/search/contactDoctor",
           },
         },
       ],
