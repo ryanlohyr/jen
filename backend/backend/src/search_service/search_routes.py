@@ -36,4 +36,6 @@ async def search(request: Request):
     
     search_agent = SearchAgent()
     results = search_agent.search(user_query, user_context)
+    
+    print(f"Results: {results}")
     return {"results": results}

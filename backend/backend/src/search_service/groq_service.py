@@ -69,7 +69,7 @@ class GroqService:
             return response
         except Exception as e:
             print(f"Error while fetching response from GroqService: {e}")
-            return None
+            raise e
 
 def main():
     groq_service = GroqService()
