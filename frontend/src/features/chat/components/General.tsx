@@ -76,6 +76,7 @@ const General = () => {
     setLoadedVapi(true);
     vapi.on("call-start", () => {
       console.log("THE CALL STARTED");
+
       setConnecting(false);
       setConnected(true);
     });
@@ -86,12 +87,28 @@ const General = () => {
       setConnected(false);
     });
 
-    vapi.on("speech-start", () => {
+    vapi.on("speech-start", async() => {
+      const response = await axios.get("https://jen-calhacks-backend.onrender.com/search/status_of_call");
+      const status = response.data.status;
+      if (status === "complete") {
+        vapi.send({
+          type: "add-message",
+          message: {
+            role: "assistant",
+            content: response.data.metadata,
+          },
+        });
+      }else {
+        console.log("NOT COMPLETE")
+        console.log(response)
+      }
       setAssistantIsSpeaking(true);
+      console.log("SPEECH STARTED");
     });
 
     vapi.on("speech-end", () => {
       setAssistantIsSpeaking(false);
+      console.log("SPEECH ENDED");
     });
 
     vapi.on("volume-level", (level) => {

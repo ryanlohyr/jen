@@ -1,4 +1,6 @@
 from fastapi import APIRouter
+from supabase import create_client, Client
+
 from .search_agent import SearchAgent
 from pydantic import BaseModel
 import requests
@@ -26,11 +28,24 @@ class SearchRequest(BaseModel):
     response: str
     user_context: str
 
+SUPABASE_URL = "https://mzcfqpondtzlfpzkyegx.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16Y2ZxcG9uZHR6bGZwemt5ZWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk0MzMwMjIsImV4cCI6MjA0NTAwOTAyMn0.wwP0eaHLpRbsrVDb8Z_LOgQh9WK2tBwxGJJi73rlxPA"
 
 @search_router.post("/contactDoctor")
 async def check_hospital_availability(request: Request):
     
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    
     data = json.loads(await request.body())
+    
+    
+    supabase.table("progress_of_call").delete().execute()
+    
+    # Insert a new row with status "progress" and metadata as null
+    supabase.table("progress_of_call").insert({
+        "status": "progress",
+        "metadata": None
+    }).execute()
     
     print(f"data: {data['message']}")
 
@@ -132,12 +147,39 @@ async def check_hospital_availability(request: Request):
 
     groq_service = GroqService()
     response = groq_service.get_groq_response(query)
+    
+    supabase.table("progress_of_call").update({"metadata": response}).eq("status", "complete").execute()
 
     res = {"results": [{"toolCallId": tool_id, "result": response}]}
 
     return res
     # return {"message": "Doctor contacted successfully"}
 
+
+@search_router.get("/status_of_call")
+async def status_of_call():
+    print("STATUS OF CALL")
+    
+    
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    
+    print("client created")
+    
+    response = supabase.table("progress_of_call").select("*").limit(1).execute()
+    
+    data = response.data
+    
+    print(data)
+    
+    if data:
+        first_item = data[0]
+        print(first_item)
+        status = first_item.get("status", "Unknown")
+        metadata = first_item.get("metadata", "Unknown")
+    else:
+        status = "No data found"
+    
+    return {"message": "Doctor contacted successfully", "metadata": metadata, "status": status}
 
 @search_router.post("/search")
 async def search(request: Request):
