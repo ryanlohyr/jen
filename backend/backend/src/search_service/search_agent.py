@@ -1,14 +1,17 @@
 import os
+from backend.src.search_service.perplexity_service import PerplexityService
 from dotenv import load_dotenv
-from backend.src.search_service.groq import GroqService
+from backend.src.search_service.groq_service import GroqService
+from pprint import pprint
 
 load_dotenv()
-PRINT_LOGS = os.getenv("PRINT_LOGS", default=False)
+PRINT_LOGS = int(os.getenv("PRINT_LOGS", default=False))
 
 
 class SearchAgent:
     def __init__(self):
         self.groq_service = GroqService()
+        self.perplexity_service = PerplexityService()
 
 
     def __search_query_formatter(self, user_query_string, user_context_dict):
@@ -22,11 +25,13 @@ class SearchAgent:
         :return: A string prompt ready to be sent to Perplexity.
         """
         prompt_template = f"""
-        Here is the context of a particular user: {user_query_string} 
-        and what the user has asked from me: {user_context_dict}. 
+        Here is the context of a particular user: {user_context_dict} 
+        and what the user has asked from me: {user_query_string}. 
         Before I directly address the query, I want to do some research using Perplexity/web search to give the user options on what they want to do. 
         Make sure to phrase the query such that I get the most relevant results and to include as much relevant context as you can.
         Given this, can you help me prepare a search query for Perplexity?
+
+        For examples on what kind of inputs and outputs are expected, see below:
 
         Example user_query_string: "I have been experiencing stomach pain and need to see a doctor soon."
         Example user_context_dict: {{
@@ -38,7 +43,9 @@ class SearchAgent:
             "timing_preferences": "this week"
         }}
         
-        Example output query: "Find nearby doctors specializing in gastroenterology available this week within walking distance of Richmond District, San Francisco who accept patients with diabetes. The things I need include the doctor's name, address, and phone number to make appointments."
+        Example response: "Find nearby doctors (their names, address, phone number etc.) specializing in gastroenterology in Richmond District, San Francisco, that accept patients with diabetes, available this week, within walking distance from Richmond District, San Francisco, who can see patients with stomach pain and a medical history of diabetes, and can provide immediate appointments this week."
+
+        NOTE: Your output should just be ONE query. Dont have "Based on the user's context and query, here's a search query that can be sent to Perplexity:" or anything like that. Just the query.
         """
 
         # Call to LLM (replace with your LLM model of choice)
@@ -47,3 +54,31 @@ class SearchAgent:
         PRINT_LOGS and print(f"SearchAgent: __search_query_formatter: response: {response}")
 
         return response
+
+    def search(self, user_query_string, user_context_dict):
+        PRINT_LOGS and print(f"SearchAgent: search inputs: user_query_string: {user_query_string} | user_context_dict: {user_context_dict}")
+
+        search_query = self.__search_query_formatter(user_query_string, user_context_dict)
+
+        search_query += " Make sure to provide details such as names, addresses, phone numbers etc. If the person doesn't have a phone number but instead I have to contact the organization, explicitly state the organization's phone number as the person's phone number. Repeat information if needed."
+
+        return self.perplexity_service.search_perplexity(search_query)
+
+def main():
+    search_agent = SearchAgent()
+    user_query_string = "I have been experiencing stomach pain and need to see a doctor soon."
+    user_context_dict = {
+            "age": 45,
+            "gender": "female",
+            "medical_history": "diabetes",
+            "location": "Richmond District, San Francisco",
+            "travel_preferences": "walking distance",
+            "timing_preferences": "this week"
+        }
+    
+    pprint(search_agent.search(user_query_string, user_context_dict))
+
+    
+
+if __name__ == "__main__":
+    main()

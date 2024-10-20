@@ -2,10 +2,11 @@ from groq import Groq
 import os
 from dotenv import load_dotenv
 from typing import Optional
+import time
 
 load_dotenv()
 
-PRINT_LOGS = os.getenv("PRINT_LOGS", default=False)
+PRINT_LOGS = int(os.getenv("PRINT_LOGS", default=False))
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 if not GROQ_API_KEY:
@@ -28,7 +29,7 @@ class GroqService:
             ValueError: If there is an error while initializing the Groq client.
         """
         try:
-            self.groq_client = Groq(GROQ_API_KEY)
+            self.groq_client = Groq(api_key=GROQ_API_KEY)
         except Exception as e:
             raise ValueError(f"Error while initializing GroqService: {e}")
 
@@ -47,6 +48,8 @@ class GroqService:
         """
         PRINT_LOGS and print(f"GroqService: get_groq_response input: query: {query}")
         try:
+            __start_time = time.time()
+
             chat_completion = self.groq_client.chat.completions.create(
                 messages=[
                     {
@@ -54,12 +57,25 @@ class GroqService:
                         "content": query,
                     }
                 ],
-                model="llama-3.1-8b-instant",
+                model="llama3-70b-8192",
             )
             response = chat_completion.choices[0].message.content
 
             PRINT_LOGS and print(f"GroqService: get_groq_response: response: {response}")
+
+            __end_time = time.time()
+
+            print(f"Time taken to get response from Groq API: {__end_time - __start_time} seconds")
             return response
         except Exception as e:
             print(f"Error while fetching response from GroqService: {e}")
             return None
+
+def main():
+    groq_service = GroqService()
+    query = "I have been experiencing stomach pain and need to see a doctor soon."
+    response = groq_service.get_groq_response(query)
+    print(f"Response from Groq API: {response}")
+
+if __name__ == "__main__":
+    main()
