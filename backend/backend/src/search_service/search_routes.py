@@ -213,3 +213,30 @@ async def search(request: Request):
     print(f"ze response is {response}")
 
     return response
+
+@search_router.post("/search-topic")
+async def search_topic(request: Request):
+    print(f"Search request: {request}")
+    try:
+        print(f"Request body: {await request.body()}")
+        user_request = json.loads(await request.body())
+
+        # user_data = user_request["message"]["toolWithToolCallList"][0]["function"]["parameters"]["properties"]
+        print("ze request is ")
+        print(user_request["message"]["toolCallList"])
+
+        tool_id = user_request["message"]["toolCallList"][0]["id"]
+
+    except json.JSONDecodeError as e:
+        logger.error(f"Error decoding JSON: {e}")
+        print(f"Error decoding JSON: {e}")
+        return {"error": f"Invalid JSON: {e}"}
+
+    search_agent = SearchAgent()
+    results = search_agent.searchAboutTopic("singing")
+
+    response = {"results": [{"toolCallId": tool_id, "result": json.dumps(results)}]}
+
+    print(f"ze response is {response}")
+
+    return response

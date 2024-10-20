@@ -64,6 +64,12 @@ class SearchAgent:
 
         return self.perplexity_service.search_perplexity(search_query)
 
+
+    def searchAboutTopic(self, topic):
+        search_query = f"Find information about {topic}. I am particularly interested in any related events happening in the near future, any notable people associated with the topic, and any recent news articles or blog posts about the topic."
+
+        return self.perplexity_service.search_perplexity(search_query)
+
 # def main():
 #     search_agent = SearchAgent()
 #     user_query_string = "I have been experiencing back pain and need to see a doctor soon."
