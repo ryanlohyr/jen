@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import { v4 } from "uuid";
-
+import axios from "axios";
 // import { useLazyGetChatQuery } from "@/services/chatAPI";
 
 import ChatStartupPage from "./ChatStartupPage";
@@ -17,7 +17,11 @@ import type { ChatBubbleProps, RequestBody } from "./types/chat.schema";
 import ChatMic from "./chatComponents/ChatMic";
 import Vapi from "@vapi-ai/web";
 
-import { initialOptions, assistantOptions, assistantId } from "./assistantConfig";
+import {
+  initialOptions,
+  assistantOptions,
+  assistantId,
+} from "./assistantConfig";
 import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 
 interface GeneralProps {
@@ -27,14 +31,13 @@ interface GeneralProps {
 
 const vapi = new Vapi(assistantId);
 const General = () => {
-  
   // Voice stuff
   const [assistantIsSpeaking, setAssistantIsSpeaking] = useState(false);
   const [volumeLevel, setVolumeLevel] = useState(0);
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
-  const { showPublicKeyInvalidMessage, setShowPublicKeyInvalidMessage } = usePublicKeyInvalid();
-
+  const { showPublicKeyInvalidMessage, setShowPublicKeyInvalidMessage } =
+    usePublicKeyInvalid();
 
   // This is the texts that are displayed in the chat
   const [generalArray, setGeneralArray] = useState<ChatBubbleProps[]>([]);
@@ -44,11 +47,21 @@ const General = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isNextChatLoading, setIsNextChatLoading] = useState(false);
 
-
   const hasSent = useRef(false); // Guard ref
   // const [triggerGetChat, { data: generalData, isError: isGetChatError }] =
   //   useLazyGetChatQuery();
   const searchParams = useSearchParams(); // Use useSearchParams
+
+  const fetchUserProfileData = async () => {
+    try {
+      const response = await axios.get(
+        "http://0.0.0.0:8080/memory/all_memories?user_id=brandon"
+      );
+      return response.data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -107,6 +120,28 @@ const General = () => {
         // Update UI to show the final transcript
         // console.log("FINAL")
         // console.log(msg.transcript)
+
+        setGeneralArray((prevArray) => {
+          const lastMessage = prevArray[prevArray.length - 1];
+          if (
+            (lastMessage && lastMessage.content === msg.transcript) ||
+            msg.transcript === "" ||
+            msg.transcript === undefined
+          ) {
+            return prevArray; // Return the array unchanged if the last message is the same
+          }
+
+          return [
+            ...prevArray,
+            {
+              isMe: msg.role === "user",
+              content: msg.transcript,
+              vendors: undefined,
+              carousell: undefined,
+            } as ChatBubbleProps,
+          ];
+        });
+
         if (
           msg.transcript
             .toLowerCase()
@@ -124,17 +159,18 @@ const General = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
-  const toggleCallInline = () => {
+  const toggleCallInline = async () => {
     if (connected) {
       console.log("STOPPING THE CALL");
-      console.log("INLINE")
+      console.log("INLINE");
       vapi.stop();
-
     } else {
       console.log("STARTING THE CALL");
       setConnecting(true);
-      vapi.start(assistantOptions as CreateAssistantDTO);
+
+      const userProfileData = await fetchUserProfileData();
+
+      vapi.start(assistantOptions(userProfileData) as CreateAssistantDTO);
     }
   };
 
@@ -176,7 +212,11 @@ const General = () => {
     <div className="flex flex-col h-full">
       <div className="grow overflow-y-auto">
         {generalArray.length === 0 && <ChatStartupPage />}
-        <ChatMic onClick={toggleCallInline} connected={connected} loadedVapi={loadedVapi}/>
+        <ChatMic
+          onClick={toggleCallInline}
+          connected={connected}
+          loadedVapi={loadedVapi}
+        />
         {generalArray.length > 0 && (
           <div className="flex flex-col overflow-x-hidden">
             {generalArray.map((chat) => (
@@ -216,7 +256,8 @@ const General = () => {
 };
 
 const usePublicKeyInvalid = () => {
-  const [showPublicKeyInvalidMessage, setShowPublicKeyInvalidMessage] = useState(false);
+  const [showPublicKeyInvalidMessage, setShowPublicKeyInvalidMessage] =
+    useState(false);
 
   // close public key invalid message after delay
   useEffect(() => {

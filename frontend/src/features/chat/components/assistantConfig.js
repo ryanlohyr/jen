@@ -1,4 +1,5 @@
-export const assistantOptions = {
+export const assistantOptions = (userProfile) => {
+  return {
     name: "Vapi’s Pizza Front Desk",
     firstMessage: "Vappy’s Hospital Booking Assistant, how can I help you?",
     transcriber: {
@@ -16,13 +17,17 @@ export const assistantOptions = {
       messages: [
         {
           role: "system",
-          content: `You are helpful assistant that talks about anything under the sky`,
+          content: `You are helpful assistant that talks about anything under the sk, this is the users current profile
+          ${JSON.stringify(userProfile)}
+          `,
         },
       ],
     },
   };
+};
+
 export const initialOptions = [
-    "What exercises can I do to improve my mobility?",
+  "What exercises can I do to improve my mobility?",
     "Help me order groceries for delivery.",
     "Book a medical appointment with my doctor for next week.",
   ];

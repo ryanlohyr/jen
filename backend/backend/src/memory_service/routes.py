@@ -41,11 +41,11 @@ async def test_run():
         "insurance": "For any content related to the users insurance and insurance claims",
     }
     
-    memory_service = MemoryService(user_id="brafdsafndon", categories=categories)
+    memory_service = MemoryService(user_id="brandon", categories=categories)
     messages = [
         {
             "role": "user",
-            "content": "Hi, I'm Alex. I'm a vegetarian and I'm allergic to nuts and I'm 25 years old.",
+            "content": "Hi, I'm Alex. I'm a vegetarian and I'm allergic to nuts and I'm 25 years old. I have chronic back pain and I dont like to go to hospitals that are further than 10 minutes of walk",
         }
     ]
 
