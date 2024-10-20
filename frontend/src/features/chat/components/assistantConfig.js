@@ -82,11 +82,11 @@ export const assistantOptions = (userProfile) => {
             //   content:
             //     "I will contact the doctor now, and let you know again when the availability!",
             // },
-            {
-              type: "request-failed",
-              content:
-                "I'm sorry, I was unable to get the relevant doctor information. Please try again later.",
-            },
+            // {
+            //   type: "request-failed",
+            //   content:
+            //     "I'm sorry, I was unable to get the relevant doctor information. Please try again later.",
+            // },
             {
               type: "request-response-delayed",
               content:
@@ -118,7 +118,7 @@ export const assistantOptions = (userProfile) => {
             },
             description: "Contacts the doctor that the patient is trying to reach.",
           },
-          async: false,
+          async: true,
           server: {
             url: "https://jen-calhacks-backend.onrender.com/search/contactDoctor",
           },
