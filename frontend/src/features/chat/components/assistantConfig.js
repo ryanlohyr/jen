@@ -1,7 +1,7 @@
 export const assistantOptions = (userProfile) => {
   return {
     name: "Vapi’s Pizza Front Desk",
-    firstMessage: "Vappy’s Hospital Booking Assistant, how can I help you?",
+    firstMessage: "Vappy’s Super Duper Companion, how can I help you?",
     transcriber: {
       provider: "deepgram",
       model: "nova-2",
@@ -121,6 +121,51 @@ export const assistantOptions = (userProfile) => {
           async: false,
           server: {
             url: "https://jen-calhacks-backend.onrender.com/search/contactDoctor",
+          },
+        },
+        {
+          type: "function",
+          messages: [
+            {
+              type: "request-start",
+              content:
+                "I am thinking of something nice you can do. Please wait...",
+            },
+            {
+              type: "request-complete",
+              content:
+                "I remember you like to sing and would love to share some stuff with you if you are still bored.",
+            },
+            {
+              type: "request-failed",
+              content:
+                "I'm sorry, I am feeling a little slow today and cant think of anything right now.",
+            },
+            {
+              type: "request-response-delayed",
+              content:
+                "I'm sorry, im feeling lazy and taking a little while.",
+              timingMilliseconds: 15000,
+            },
+          ],
+          function: {
+            name: "findSomethingToDo",
+            parameters: {
+              type: "object",
+              properties: {
+                user_query: {
+                  type: "string",
+                },
+                user_context: {
+                  type: "object",
+                },
+              },
+            },
+            description: "Gets some random information about events and topics to talk about when you are bored.",
+          },
+          async: false,
+          server: {
+            url: "https://jen-calhacks-backend.onrender.com/search/search-topic",
           },
         },
       ],
