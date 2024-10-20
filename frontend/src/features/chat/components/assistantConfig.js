@@ -1,7 +1,7 @@
 export const assistantOptions = (userProfile) => {
   return {
     name: "Vapi’s Pizza Front Desk",
-    firstMessage: "Vappy’s Super Duper Companion, how can I help you?",
+    firstMessage: "I'm jen, your super duper Companion, how can I help you?",
     transcriber: {
       provider: "deepgram",
       model: "nova-2",

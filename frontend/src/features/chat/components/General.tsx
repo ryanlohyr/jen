@@ -21,9 +21,10 @@ import {
   initialOptions,
   assistantOptions,
   vapiPublicKey,
-  assistantId
+  assistantId,
 } from "./assistantConfig";
 import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
+import { Button } from "@/components/ui/button";
 
 interface GeneralProps {
   generalArray: ChatBubbleProps[];
@@ -70,8 +71,6 @@ const General = () => {
     }, 100); // Adjust delay as needed
   }, [generalArray]);
 
-
-
   // hook into Vapi events
   useEffect(() => {
     console.log("SETTING UP THE CALL");
@@ -88,7 +87,7 @@ const General = () => {
       setConnected(false);
     });
 
-    vapi.on("speech-start", async() => {
+    vapi.on("speech-start", async () => {
       setAssistantIsSpeaking(true);
       console.log("SPEECH STARTED");
     });
@@ -110,7 +109,6 @@ const General = () => {
 
     vapi.on("message", async (msg) => {
       if (msg.type !== "transcript") return;
-
 
       if (msg.transcriptType === "final") {
         // Update UI to show the final transcript
@@ -149,6 +147,8 @@ const General = () => {
   }, []);
 
   const toggleCallInline = async () => {
+    console.log("toggleCallInline called");
+
     if (connected) {
       console.log("STOPPING THE CALL");
       console.log("INLINE");
@@ -191,6 +191,33 @@ const General = () => {
         connected={connected}
         loadedVapi={loadedVapi}
       />
+      {generalArray.length > 0 && (
+        <Button
+          variant="outline"
+          onClick={async () => {
+            vapi.stop();
+
+
+            const messages = generalArray
+            .filter(chat => chat.isMe)
+            .map(chat => chat.content)
+
+            console.log("messages are ")
+            console.log(messages);
+
+            if (messages.length === 0) return;
+
+            const response = await axios.post("http://0.0.0.0:8080/memory/add_messages", {
+              messages: messages
+            });
+
+            console.log(response);
+            
+          }}
+        >
+          Stop Jenny
+        </Button>
+      )}
       <div className="grow overflow-y-auto">
         {generalArray.length > 0 && (
           <div className="flex flex-col overflow-x-hidden">
