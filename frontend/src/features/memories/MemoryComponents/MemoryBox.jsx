@@ -26,7 +26,6 @@ import { Button } from "@/components/ui/button";
 const MemoryBox = ({ memory, setRefresh }) => {
   const { toast } = useToast();
   const memory_id = memory.id;
-  console.log(memory);
   const [isEdit, setIsEdit] = useState(false);
   const [currentMemory, setCurrentMemory] = useState(memory.memory);
 

@@ -82,7 +82,6 @@ const General = () => {
     });
 
     vapi.on("call-end", () => {
-      console.log("THE CALL ENDED");
       setConnecting(false);
       setConnected(false);
     });
@@ -101,8 +100,7 @@ const General = () => {
           },
         });
       }else {
-        console.log("NOT COMPLETE")
-        console.log(response)
+
       }
       setAssistantIsSpeaking(true);
       console.log("SPEECH STARTED");
@@ -126,15 +124,6 @@ const General = () => {
     vapi.on("message", async (msg) => {
       if (msg.type !== "transcript") return;
 
-      console.log("MESSAGE");
-      console.log(msg);
-      console.log("end");
-
-      if (msg.transcriptType === "partial") {
-        // Update UI to show the live partial transcript
-        // console.log("PARTIAL")
-        // console.log(msg)
-      }
 
       if (msg.transcriptType === "final") {
         // Update UI to show the final transcript
@@ -150,6 +139,10 @@ const General = () => {
           ) {
             return prevArray; // Return the array unchanged if the last message is the same
           }
+
+          console.log("MESSAGE");
+          console.log(msg);
+          console.log("end");
 
           return [
             ...prevArray,
